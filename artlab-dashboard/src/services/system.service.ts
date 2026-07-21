@@ -16,7 +16,7 @@ export async function getModels(): Promise<ModelInfo[]> {
   if (import.meta.env.VITE_USE_MOCK !== 'false') {
     return [
       { id: 'sdxl', name: 'SDXL (BalancedAllInOnePhotorealAnime_v10)', type: 'sdxl', path: '/models/BalancedAllInOnePhotorealAnime_v10.safetensors', size: 6.46, status: 'unloaded' },
-      { id: 'qwen', name: 'Qwen Q4_K_M', type: 'llm', path: 'HF: unsloth/Qwen2.5-7B-Instruct-gguf', size: 4.5, status: 'unloaded' },
+      { id: 'qwen', name: 'Qwen3.5-9B Q4_K_M (Uncensored)', type: 'llm', path: 'HF: HauhauCS/Qwen3.5-9B-Uncensored-HauhauCS-Aggressive', size: 5.3, status: 'unloaded' },
     ]
   }
   return apiGet<ModelInfo[]>('/models')
