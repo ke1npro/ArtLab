@@ -29,12 +29,15 @@ export function SystemPanel() {
   const refresh = async () => {
     try {
       const res = await fetch(`${getApiConfig().baseUrl}/health`, { signal: AbortSignal.timeout(3000) })
-      setServerOnline(res.ok)
-    } catch {
-      setServerOnline(false)
-    }
-    setResources(await getSystemResources())
-    setModels(await getModels())
+      if (res.ok) {
+        setServerOnline(true)
+        setResources(await getSystemResources())
+        setModels(await getModels())
+        return
+      }
+    } catch { /* ignora */ }
+    setServerOnline(false)
+    setResources(null)
   }
 
   useEffect(() => {
