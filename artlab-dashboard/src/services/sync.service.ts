@@ -87,7 +87,8 @@ export function connectWebSocket(url: string) {
   notifyStatus('connecting')
 
   try {
-    const wsUrl = url.replace(/^http/, 'ws') + '/sync/ws'
+    const baseUrl = url.replace(/\/+$/, '').replace(/^http/, 'ws')
+    const wsUrl = baseUrl + '/sync/ws'
     ws = new WebSocket(wsUrl)
 
     ws.onopen = () => {
