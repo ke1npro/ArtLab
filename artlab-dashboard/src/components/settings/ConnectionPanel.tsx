@@ -35,11 +35,19 @@ export function ConnectionPanel() {
     return unsub
   }, [])
 
+  const normalizeUrl = (raw: string) => {
+    const trimmed = raw.replace(/\/+$/, '')
+    if (!/^https?:\/\//i.test(trimmed)) return `https://${trimmed}`
+    return trimmed
+  }
+
   const handleTest = async () => {
     setTesting(true)
     setTestResult('idle')
+    const normalized = normalizeUrl(url)
+    setUrl(normalized)
+    setApiConfig({ baseUrl: normalized })
     const start = performance.now()
-    setApiConfig({ baseUrl: url })
     const ok = await apiHealthCheck()
     setLatency(Math.round(performance.now() - start))
     setTestResult(ok ? 'ok' : 'fail')
@@ -138,7 +146,7 @@ export function ConnectionPanel() {
           <Input
             label="API URL"
             value={url}
-            onChange={(e) => setUrl(e.target.value.replace(/\/+$/, ''))}
+            onChange={(e) => setUrl(e.target.value)}
             placeholder="http://localhost:8000"
           />
         </div>
