@@ -80,6 +80,12 @@ export async function pullState(): Promise<string | null> {
   }
 }
 
+function normalizeWsUrl(raw: string): string {
+  const trimmed = raw.replace(/\/+$/, '')
+  const withProtocol = /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`
+  return withProtocol.replace(/^http/, 'ws')
+}
+
 export function connectWebSocket(url: string) {
   disconnectWebSocket()
 
@@ -87,7 +93,7 @@ export function connectWebSocket(url: string) {
   notifyStatus('connecting')
 
   try {
-    const baseUrl = url.replace(/\/+$/, '').replace(/^http/, 'ws')
+    const baseUrl = normalizeWsUrl(url)
     const wsUrl = baseUrl + '/sync/ws'
     ws = new WebSocket(wsUrl)
 
