@@ -1,12 +1,15 @@
 import { useState, useCallback } from 'react'
 import { useQueueContext } from '@/hooks/QueueContext'
 import { useTimelineContext } from '@/hooks/TimelineContext'
+import { useSystemMonitor } from '@/hooks/useSystemMonitor'
 import { generateImage } from '@/services/generation.service'
 import { loadModel } from '@/services/system.service'
 import { ModelLoadBanner } from '@/components/ui/ModelLoadBanner'
+import { SystemSummary } from '@/components/ui/SystemSummary'
 import { QueueBoard } from '@/components/queue/QueueBoard'
 
 export function QueuePage() {
+  const { resources, serverOnline, loadedModels } = useSystemMonitor()
   const { columns, moveCard, addCard, updateCard, deleteCard } = useQueueContext()
   const { addEvent } = useTimelineContext()
   const [generatingId, setGeneratingId] = useState<string | null>(null)
@@ -67,11 +70,14 @@ export function QueuePage() {
 
   return (
     <div className="h-full flex flex-col">
-      <div className="mb-4">
-        <h1 className="text-lg font-bold text-text-primary">Kanban</h1>
-        <p className="text-sm text-text-muted mt-0.5">
-          Ideas → Revisión → Publicado. Las tarjetas en Idea tienen botón "Generar" que las mueve a Revisión automáticamente.
-        </p>
+      <div className="mb-4 flex items-start justify-between">
+        <div>
+          <h1 className="text-lg font-bold text-text-primary">Kanban</h1>
+          <p className="text-sm text-text-muted mt-0.5">
+            Ideas → Revisión → Publicado. Las tarjetas en Idea tienen botón "Generar" que las mueve a Revisión automáticamente.
+          </p>
+        </div>
+        <SystemSummary resources={resources} serverOnline={serverOnline} loadedModels={loadedModels} />
       </div>
 
       <div className="mb-3">

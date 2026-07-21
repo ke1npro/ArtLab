@@ -4,16 +4,19 @@ import { useReferenceSelection } from '@/hooks/ReferenceSelectionContext'
 import { useTimelineContext } from '@/hooks/TimelineContext'
 import { useQueueContext } from '@/hooks/QueueContext'
 import { useSettingsContext } from '@/hooks/SettingsContext'
+import { useSystemMonitor } from '@/hooks/useSystemMonitor'
 import { PromptForm } from '@/components/prompt/PromptForm'
 import { PromptPreview } from '@/components/prompt/PromptPreview'
 import { ContextImporter } from '@/components/prompt/ContextImporter'
 import { ContextPreview } from '@/components/prompt/ContextPreview'
+import { SystemSummary } from '@/components/ui/SystemSummary'
 import { Button } from '@/components/ui/Button'
 import { Hammer, ListPlus, Image, X } from 'lucide-react'
 import { useServerStatusContext } from '@/hooks/ServerStatusContext'
 
 export function PromptPage() {
   const { offline } = useServerStatusContext()
+  const { resources, serverOnline, loadedModels } = useSystemMonitor()
   const { genDefaults } = useSettingsContext()
   const { form, result, building, updateField, build } = usePrompt({
     cfg: genDefaults.cfg,
@@ -58,9 +61,12 @@ export function PromptPage() {
 
   return (
     <div className="h-full flex flex-col">
-      <div className="mb-4">
-        <h1 className="text-lg font-bold text-text-primary">Constructor de Prompts</h1>
-        <p className="text-sm text-text-muted mt-0.5">Construye prompts, incluye referencias, y envíalos a generar</p>
+      <div className="mb-4 flex items-start justify-between">
+        <div>
+          <h1 className="text-lg font-bold text-text-primary">Constructor de Prompts</h1>
+          <p className="text-sm text-text-muted mt-0.5">Construye prompts, incluye referencias, y envíalos a generar</p>
+        </div>
+        <SystemSummary resources={resources} serverOnline={serverOnline} loadedModels={loadedModels} />
       </div>
 
       <div className="flex gap-4 flex-1 min-h-0">

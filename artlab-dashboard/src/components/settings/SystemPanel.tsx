@@ -1,10 +1,11 @@
-import { useEffect, useState } from 'react'
-import { getSystemResources, getModels } from '@/services/system.service'
+import { useState, useEffect } from 'react'
 import { loadModel, unloadModel } from '@/services/system.service'
+import { getSystemResources, getModels } from '@/services/system.service'
 import { getApiConfig } from '@/services/api'
+import { SystemSummary } from '@/components/ui/SystemSummary'
 import type { SystemResources, ModelInfo } from '@/types/settings'
 import { Button } from '@/components/ui/Button'
-import { HardDrive, MemoryStick, Cpu, Loader, Wifi, WifiOff } from 'lucide-react'
+import { HardDrive, MemoryStick, Cpu, Loader } from 'lucide-react'
 
 function Bar({ used, total, color }: { used: number; total: number; color: string }) {
   const pct = Math.min((used / total) * 100, 100)
@@ -24,7 +25,6 @@ export function SystemPanel() {
   const [loadingModel, setLoadingModel] = useState<string | null>(null)
   const [loadLog, setLoadLog] = useState<string[]>([])
   const [serverOnline, setServerOnline] = useState(false)
-  const isMock = import.meta.env.VITE_USE_MOCK !== 'false'
 
   const refresh = async () => {
     try {
@@ -74,7 +74,6 @@ export function SystemPanel() {
   }
 
   const loadedModels = models.filter((m) => m.status === 'loaded')
-  const isLive = serverOnline && !isMock
 
   return (
     <div className="space-y-6">
@@ -83,34 +82,10 @@ export function SystemPanel() {
           <h3 className="text-sm font-semibold text-text-primary mb-1">📊 Recursos del sistema</h3>
           <p className="text-xs text-text-muted mb-3">Monitoreo en vivo del servidor Colab</p>
         </div>
-
-        {resources && (
-          <div className="shrink-0 bg-surface-hover border border-surface-border rounded-lg px-3 py-2 text-[10px] leading-relaxed min-w-[140px]">
-            <div className="flex items-center gap-1.5 mb-1">
-              {serverOnline
-                ? <><Wifi size={10} className="text-status-online" /><span className="text-status-online font-medium">Online</span></>
-                : <><WifiOff size={10} className="text-status-offline" /><span className="text-status-offline font-medium">Offline</span></>
-              }
-              {isMock && <span className="text-text-muted ml-1">(Mock)</span>}
-            </div>
-            {loadedModels.length > 0 ? (
-              loadedModels.map((m) => (
-                <div key={m.id} className="text-text-secondary truncate max-w-[160px]">✓ {m.name}</div>
-              ))
-            ) : (
-              <div className="text-text-muted">Sin modelos cargados</div>
-            )}
-            {resources && (
-              <div className="text-text-muted mt-1 border-t border-surface-border pt-1">
-                RAM {resources.ram.used.toFixed(1)}/{resources.ram.total.toFixed(1)} GB
-                {resources.vram.total > 0 && ` · VRAM ${resources.vram.used.toFixed(1)}/${resources.vram.total.toFixed(1)} GB`}
-              </div>
-            )}
-          </div>
-        )}
+        <SystemSummary resources={resources} serverOnline={serverOnline} loadedModels={loadedModels} />
       </div>
 
-      {isLive && resources ? (
+      {serverOnline && resources ? (
         <div className="space-y-3">
           <div className="flex items-center gap-2 text-xs text-text-secondary">
             <MemoryStick size={14} /> RAM
@@ -133,7 +108,7 @@ export function SystemPanel() {
         </div>
       ) : (
         <div className="text-xs text-text-muted italic py-4 text-center border border-dashed border-surface-border rounded-lg">
-          {isMock ? 'Conecta al servidor Colab para ver recursos reales' : 'Esperando datos del servidor...'}
+          Esperando datos del servidor...
         </div>
       )}
 
