@@ -7,6 +7,9 @@ export interface ApiConfig {
 let config: ApiConfig = { baseUrl: API_BASE }
 
 export function setApiConfig(newConfig: Partial<ApiConfig>) {
+  if (newConfig.baseUrl) {
+    newConfig.baseUrl = newConfig.baseUrl.replace(/\/+$/, '')
+  }
   config = { ...config, ...newConfig }
 }
 

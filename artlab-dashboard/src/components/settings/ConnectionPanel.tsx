@@ -19,7 +19,7 @@ const syncLabels: Record<SyncStatus, { text: string; color: string }> = {
 }
 
 export function ConnectionPanel() {
-  const [url, setUrl] = useState(getApiConfig().baseUrl)
+  const [url, setUrl] = useState(getApiConfig().baseUrl.replace(/\/+$/, ''))
   const [testing, setTesting] = useState(false)
   const [testResult, setTestResult] = useState<'idle' | 'ok' | 'fail'>('idle')
   const [latency, setLatency] = useState(0)
@@ -138,7 +138,7 @@ export function ConnectionPanel() {
           <Input
             label="API URL"
             value={url}
-            onChange={(e) => setUrl(e.target.value)}
+            onChange={(e) => setUrl(e.target.value.replace(/\/+$/, ''))}
             placeholder="http://localhost:8000"
           />
         </div>
