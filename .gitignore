@@ -1,0 +1,29 @@
+# Dashboard
+artlab-dashboard/node_modules/
+artlab-dashboard/dist/
+artlab-dashboard/.env
+artlab-dashboard/.env.local
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+*.gguf
+*.safetensors
+
+# Colab / Data
+notebooks/artlab_data/
+notebooks/artlab_models/
+notebooks/.ngrok_config/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db

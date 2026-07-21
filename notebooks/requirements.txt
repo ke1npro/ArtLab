@@ -1,0 +1,22 @@
+# Core
+fastapi>=0.115.0
+uvicorn[standard]>=0.32.0
+websockets>=14.0
+pydantic>=2.0
+
+# System
+psutil>=6.0
+
+# Tunnel
+pyngrok>=7.0
+
+# ML - SDXL
+torch>=2.4.0
+diffusers>=0.32.0
+transformers>=4.46.0
+accelerate>=1.0.0
+sentencepiece>=0.2.0
+xformers>=0.0.28
+
+# ML - Qwen GGUF
+llama-cpp-python>=0.3.0
