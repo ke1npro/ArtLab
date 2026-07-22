@@ -31,12 +31,31 @@ export function ChatInput({ onSend, disabled, loading }: ChatInputProps) {
     if (!trimmed || disabled || loading) return
     onSend(trimmed, activeContext ?? undefined, attachedImage ?? undefined)
     setValue('')
+    setAttachedImage(null)
+    setAttachedImageName('')
   }
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault()
       handleSend()
+    }
+  }
+
+  const handlePaste = (e: React.ClipboardEvent) => {
+    const items = e.clipboardData?.items
+    if (!items) return
+    for (const item of items) {
+      if (item.type.startsWith('image/')) {
+        e.preventDefault()
+        const file = item.getAsFile()
+        if (!file) continue
+        setAttachedImageName(file.name || 'clipboard.png')
+        const reader = new FileReader()
+        reader.onload = () => setAttachedImage(reader.result as string)
+        reader.readAsDataURL(file)
+        break
+      }
     }
   }
 
@@ -90,6 +109,7 @@ export function ChatInput({ onSend, disabled, loading }: ChatInputProps) {
               value={value}
               onChange={(e) => setValue(e.target.value)}
               onKeyDown={handleKeyDown}
+              onPaste={handlePaste}
               placeholder="Escribe un mensaje... (Enter para enviar)"
               rows={1}
               disabled={disabled}

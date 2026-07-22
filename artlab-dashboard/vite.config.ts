@@ -20,6 +20,7 @@ export default defineConfig(({ mode }) => {
         '/system': { target, changeOrigin: true },
         '/models': { target, changeOrigin: true },
         '/chat': { target, changeOrigin: true },
+        '/chat/ws': { target, changeOrigin: true, ws: true },
         '/generate': { target, changeOrigin: true },
         '/build_prompt': { target, changeOrigin: true },
         '/logs': { target, changeOrigin: true },
