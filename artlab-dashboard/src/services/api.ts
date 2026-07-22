@@ -4,7 +4,10 @@ export interface ApiConfig {
   baseUrl: string
 }
 
-let config: ApiConfig = { baseUrl: API_BASE }
+// En dev mode, usa rutas relativas (Vite proxy resuelve CORS)
+const defaultBase = import.meta.env.DEV ? '' : API_BASE
+
+let config: ApiConfig = { baseUrl: defaultBase }
 
 export function setApiConfig(newConfig: Partial<ApiConfig>) {
   if (newConfig.baseUrl) {
@@ -35,7 +38,9 @@ export async function apiPost<T>(path: string, body: unknown): Promise<T> {
 
 export async function apiHealthCheck(): Promise<boolean> {
   try {
-    const res = await fetch(`${config.baseUrl}/health`, { signal: AbortSignal.timeout(3000) })
+    // En dev mode, usa ruta relativa (Vite proxy) para evitar CORS
+    const url = import.meta.env.DEV ? '/health' : `${config.baseUrl}/health`
+    const res = await fetch(url, { signal: AbortSignal.timeout(3000) })
     return res.ok
   } catch {
     return false

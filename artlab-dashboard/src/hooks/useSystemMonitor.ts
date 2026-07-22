@@ -10,7 +10,8 @@ export function useSystemMonitor() {
 
   const refresh = async () => {
     try {
-      const res = await fetch(`${getApiConfig().baseUrl}/health`, { signal: AbortSignal.timeout(3000) })
+      const url = import.meta.env.DEV ? '/health' : `${getApiConfig().baseUrl}/health`
+      const res = await fetch(url, { signal: AbortSignal.timeout(3000) })
       if (res.ok) {
         setServerOnline(true)
         setResources(await getSystemResources())

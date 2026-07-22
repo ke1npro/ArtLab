@@ -23,7 +23,8 @@ export function ModelLoadBanner({ modelId, actionLabel }: ModelLoadBannerProps) 
     const fetchHealth = async () => {
       try {
         const { baseUrl } = getApiConfig()
-        const res = await fetch(`${baseUrl}/health`, { signal: AbortSignal.timeout(3000) })
+        const url = import.meta.env.DEV ? '/health' : `${baseUrl}/health`
+        const res = await fetch(url, { signal: AbortSignal.timeout(3000) })
         if (res.ok) {
           setHealth(await res.json())
         }
