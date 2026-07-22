@@ -3,6 +3,16 @@ import type { ChatMessage } from '@/types/chat'
 import { sendChatMessage } from '@/services/chat.service'
 import { getApiConfig } from '@/services/api'
 
+function stripHistory(hist: ChatMessage[]): object[] {
+  return hist.map(m => {
+    const entry: any = { role: m.role, content: m.content }
+    if (m.images?.length) {
+      entry.content += '\n[imagen adjunta]'
+    }
+    return entry
+  })
+}
+
 export function useChat() {
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [sending, setSending] = useState(false)
@@ -12,7 +22,7 @@ export function useChat() {
 
   const sendViaHttp = useCallback(async (content: string, context?: string, image?: string) => {
     try {
-      const hist = messagesRef.current
+      const hist = stripHistory(messagesRef.current)
       const res = await sendChatMessage({ message: content, context, image, history: hist })
       setMessages((prev) => [...prev, {
         id: res.messageId,
@@ -68,7 +78,7 @@ export function useChat() {
               message: content,
               context: context || undefined,
               image: image || undefined,
-              history: messagesRef.current.slice(0, -1),
+              history: stripHistory(messagesRef.current.slice(0, -1)),
             }))
           }
 
@@ -86,6 +96,11 @@ export function useChat() {
                   break
                 case 'think_start':
                   reasoning = ''
+                  break
+                case 'final':
+                  reply = data.reply
+                  reasoning = data.reasoning || ''
+                  setMessages((prev) => prev.map((m) => m.id === assistantId ? { ...m, content: data.reply, reasoning: data.reasoning || '' } : m))
                   break
                 case 'done':
                   setMessages((prev) => prev.map((m) => m.id === assistantId ? { ...m, id: data.messageId } : m))
